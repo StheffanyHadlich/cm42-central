@@ -1,6 +1,6 @@
 require 'feature_helper'
 
-describe 'Teams' do
+describe 'Teams', js: true do
   before { sign_in user }
 
   context 'when user is not a team admin' do
@@ -11,8 +11,8 @@ describe 'Teams' do
         visit teams_path
         click_link 'Create new team'
       end
-      
-      it 'should create a new team and set the user as admin' do  
+
+      it 'should create a new team and set the user as admin' do
         fill_in 'Team Name', with: 'foobar'
         click_button 'Create new team'
 
@@ -49,6 +49,7 @@ describe 'Teams' do
           visit edit_team_path(user.teams.last.slug)
 
           attach_file('Logo', Rails.root.join('spec', 'fixtures', 'blank.jpg'))
+          wait_for_ajax
           click_button 'Update Team'
 
           expect(user.teams.last.logo).not_to be_nil
