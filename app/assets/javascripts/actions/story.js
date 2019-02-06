@@ -26,6 +26,11 @@ export const editStory = (id, newAttributes) => ({
   newAttributes
 });
 
+export const setLoading = (id) => ({
+  type: actionTypes.SET_LOADING,
+  id
+});
+
 export const updateStory = (story, projectId) =>
   (dispatch, getState, { Story }) => {
     if (story._editing._isDirty) {

@@ -10,7 +10,7 @@ import ExpandedStoryState from './ExpandedStoryState';
 import ExpandedStoryTitle from './ExpandedStoryTitle';
 import ExpandedStoryLabels from './ExpandedStoryLabels';
 import ExpandedStoryTask from './ExpandedStoryTask';
-import { editStory, updateStory, deleteStory } from '../../../actions/story';
+import { editStory, updateStory, deleteStory, setLoading } from '../../../actions/story';
 import { createTask, deleteTask, toggleTask } from '../../../actions/task';
 import { deleteNote, createNote } from '../../../actions/note';
 import { addLabel, removeLabel } from '../../../actions/labels';
@@ -25,6 +25,7 @@ export const ExpandedStory = ({
   editStory,
   updateStory,
   deleteStory,
+  setLoading,
   project,
   createTask,
   deleteTask,
@@ -35,12 +36,14 @@ export const ExpandedStory = ({
   addLabel,
   removeLabel
 }) => {
+  const loading = story._editing.loading ? "Story__enable-loading" : ""
   return (
-    <div className="Story Story--expanded">
+    <div className={`Story Story--expanded ${loading}`} >
+      <div className="Story__loading"></div>
       <ExpandedStoryControls
         onCancel={onToggle}
-        onSave={() => updateStory(story, project.id)}
-        onDelete={() => deleteStory(story.id, project.id)}
+        onSave={() => { setLoading(story.id), updateStory(story, project.id) }}
+        onDelete={() => { setLoading(story.id), deleteStory(story.id, project.id) }}
         readOnly={Story.isAccepted(story)}
       />
       <ExpandedStoryHistoryLocation story={story} />
@@ -93,15 +96,15 @@ export const ExpandedStory = ({
       <ExpandedStoryNotes
         story={story}
         projectId={project.id}
-        onDelete={(noteId) => deleteNote(project.id, story.id, noteId)}
-        onCreate={(note) => createNote(project.id, story.id, { note })}
+        onDelete={(noteId) => { setLoading(story.id), deleteNote(project.id, story.id, noteId) }}
+        onCreate={(note) => { setLoading(story.id), createNote(project.id, story.id, { note }) }}
       />
 
       <ExpandedStoryTask
         story={story}
-        onToggle={ (task, status) => toggleTask(project.id, story, task, status)}
-        onDelete={(taskId) => deleteTask(project.id, story.id, taskId)}
-        onSave={(task) => createTask(project.id, story.id, task)}
+        onToggle={(task, status) => toggleTask(project.id, story, task, status)}
+        onDelete={(taskId) => { setLoading(story.id), deleteTask(project.id, story.id, taskId) }}
+        onSave={(task) => { setLoading(story.id), createTask(project.id, story.id, task) }}
       />
     </div>
   );
@@ -120,6 +123,7 @@ export default connect(
     updateStory,
     createTask,
     deleteTask,
+    setLoading,
     toggleTask,
     deleteStory,
     deleteNote,

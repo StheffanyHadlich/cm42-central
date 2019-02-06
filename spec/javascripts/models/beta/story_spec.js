@@ -222,6 +222,7 @@ describe('Story model', function () {
           collapsed: false,
           _editing: {
             collapsed: true,
+            loading: false,
             _isDirty: false
           }
         });
